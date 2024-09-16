@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import TodoItem from './components/TodoItem';
 import 'react-datepicker/dist/react-datepicker.css';
-// Import your image here
 import backgroundImage from './assets/mybg.jpg'; // replace with your image path
 
 function App() {
@@ -9,9 +8,18 @@ function App() {
   const [newTask, setNewTask] = useState('');
   const [startDate, setStartDate] = useState(new Date());
 
+  // Function to generate unique IDs for tasks
+  const generateId = () => Math.random().toString(36).substr(2, 9);
+
   const addTask = () => {
     if (newTask.trim() !== '') {
-      setTasks([...tasks, { text: newTask, date: startDate, isCompleted: false }]);
+      const newTaskItem = {
+        id: generateId(),  // Generate a unique ID for each task
+        text: newTask,
+        date: startDate,
+        isCompleted: false,
+      };
+      setTasks([...tasks, newTaskItem]);
       setNewTask('');
       setStartDate(new Date());
     }
@@ -23,29 +31,33 @@ function App() {
     }
   };
 
-  const deleteTask = (index) => {
-    setTasks(tasks.filter((_, i) => i !== index));
+  const deleteTask = (id) => {
+    setTasks(tasks.filter((task) => task.id !== id));
   };
 
-  const editTask = (index, newText, newDate) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index] = { ...updatedTasks[index], text: newText, date: newDate };
-    setTasks(updatedTasks);
+  const editTask = (id, newText, newDate) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, text: newText, date: newDate } : task
+      )
+    );
   };
 
-  const toggleCompletion = (index) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index] = { ...updatedTasks[index], isCompleted: !updatedTasks[index].isCompleted };
-    setTasks(updatedTasks);
+  const toggleCompletion = (id) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, isCompleted: !task.isCompleted } : task
+      )
+    );
   };
 
-  const incompleteTasks = tasks.filter(task => !task.isCompleted);
-  const completedTasks = tasks.filter(task => task.isCompleted);
+  const incompleteTasks = tasks.filter((task) => !task.isCompleted);
+  const completedTasks = tasks.filter((task) => task.isCompleted);
 
   return (
     <div 
       className="min-h-screen bg-cover bg-center flex items-center justify-center"
-      style={{ backgroundImage: `url(${backgroundImage})` }} // Use imported image here
+      style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className="w-full max-w-md p-4 bg-black bg-opacity-20 rounded-lg">
         <h1 className="text-4xl font-bold mb-6 rounded-md text-center bg-gradient-to-r from-blue-600 to-purple-400 hover:from-purple-400 hover:to-blue-600">
@@ -57,7 +69,7 @@ function App() {
             <input
               type="text"
               className="w-full p-2 rounded-full bg-gray-700 text-white focus:outline-none"
-              placeholder=" Add a task"
+              placeholder="Add a task"
               value={newTask}
               onChange={(e) => setNewTask(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -74,34 +86,34 @@ function App() {
         <div className="mb-6">
           <h2 className="text-2xl text-center text-white font-bold mb-4">Incomplete Tasks</h2>
           {incompleteTasks.length > 0 ? (
-            incompleteTasks.map((task, index) => (
+            incompleteTasks.map((task) => (
               <TodoItem
-                key={index}
+                key={task.id}
                 task={task}
-                onDelete={() => deleteTask(index)}
-                onEdit={(newText, newDate) => editTask(index, newText, newDate)}
-                onToggle={() => toggleCompletion(index)}
+                onDelete={() => deleteTask(task.id)}
+                onEdit={(newText, newDate) => editTask(task.id, newText, newDate)}
+                onToggle={() => toggleCompletion(task.id)}
               />
             ))
           ) : (
-            <p className='text-white '>No incomplete tasks!</p>
+            <p className="text-white">No incomplete tasks!</p>
           )}
         </div>
 
         <div>
-          <h2 className="text-2xl text-center text-white   font-bold mb-4">Completed Tasks</h2>
+          <h2 className="text-2xl text-center text-white font-bold mb-4">Completed Tasks</h2>
           {completedTasks.length > 0 ? (
-            completedTasks.map((task, index) => (
+            completedTasks.map((task) => (
               <TodoItem
-                key={index}
+                key={task.id}
                 task={task}
-                onDelete={() => deleteTask(index)}
-                onEdit={(newText, newDate) => editTask(index, newText, newDate)}
-                onToggle={() => toggleCompletion(index)}
+                onDelete={() => deleteTask(task.id)}
+                onEdit={(newText, newDate) => editTask(task.id, newText, newDate)}
+                onToggle={() => toggleCompletion(task.id)}
               />
             ))
           ) : (
-            <p className='text-white '>No completed tasks!</p>
+            <p className="text-white">No completed tasks!</p>
           )}
         </div>
       </div>
