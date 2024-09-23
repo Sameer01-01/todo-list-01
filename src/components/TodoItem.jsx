@@ -66,6 +66,7 @@ const TodoItem = ({ task, onDelete, onEdit, onToggle }) => {
   );
 };
 
+
 TodoItem.propTypes = {
   task: PropTypes.shape({
     text: PropTypes.string.isRequired,
