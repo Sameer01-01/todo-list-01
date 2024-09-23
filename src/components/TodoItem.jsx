@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
 
+
 const TodoItem = ({ task, onDelete, onEdit, onToggle }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newText, setNewText] = useState(task.text);
