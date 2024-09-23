@@ -14,6 +14,7 @@ const TodoItem = ({ task, onDelete, onEdit, onToggle }) => {
     setIsEditing(false);
   };
 
+  
   return (
     <div className={`flex items-center justify-between mb-2 p-3 rounded ${task.isCompleted ? 'bg-gray-600' : 'bg-gray-700'}`}>
       {isEditing ? (
